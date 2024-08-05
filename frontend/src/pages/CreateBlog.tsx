@@ -2,9 +2,9 @@ import { useState } from "react";
 import { CiBellOn } from "react-icons/ci";
 import { GoKebabHorizontal } from "react-icons/go";
 // import { Publish } from "../components/Publish";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
-import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import { BACKEND_URL } from "../config";
+// import { useNavigate } from "react-router-dom";
 import { Modal } from "../components/Modal";
 
 export function CreateBlog() {
@@ -15,7 +15,7 @@ export function CreateBlog() {
 
   const [modal, setModal] = useState(true);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleInputChange = (
     event:

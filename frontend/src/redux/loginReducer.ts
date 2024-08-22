@@ -13,7 +13,7 @@ export const loginSlice = createSlice ({
     reducers: {
         setLogin: (state) => {
                 state.isLogin = !state.isLogin;
-        }
+        } 
     }
 })
 

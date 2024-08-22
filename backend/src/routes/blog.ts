@@ -27,7 +27,7 @@ blogRouter.use("/*", async (c, next) => {
 });
 
 // New blog 
-blogRouter.post('/', async (c) => {
+blogRouter.post('/new', async (c) => {
 	const userId = c.get('userId');
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL,
@@ -54,7 +54,8 @@ blogRouter.post('/', async (c) => {
 	});
 })
 
-blogRouter.put('/', async (c) => {
+// Update blog
+blogRouter.put('/update', async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL	,
 	}).$extends(withAccelerate());
@@ -87,6 +88,7 @@ blogRouter.put('/', async (c) => {
     }
 });
 
+// Bulk router for multiple posts and with pagination
 blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,

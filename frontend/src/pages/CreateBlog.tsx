@@ -13,7 +13,7 @@ export function CreateBlog() {
     content: "",
   });
 
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
 
   // const navigate = useNavigate();
 
@@ -44,8 +44,8 @@ export function CreateBlog() {
  
   return (
     <div>
-      <Modal/>
-      <div className="flex items-center justify-between w-4/5 py-8 h-12 mx-auto mb-4 ">
+      {modal && <Modal/>}
+      <div className="flex items-center justify-between w-4/5 py-8 h-12 mx-auto mb-4">
         <div className=" px-2 font-semibold text-2xl">Medium</div>
         <div className=" flex justify-center items-center">
           <button onClick={toggleModal} className=" px-3 bg-green-700 rounded-full mx-2 text-slate-100 text-sm py-[2px] font-medium">

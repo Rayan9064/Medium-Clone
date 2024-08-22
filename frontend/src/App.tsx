@@ -4,9 +4,11 @@ import Signin from './pages/Signin'
 import Blog from './pages/Blog'
 import Blogs from './pages/Blogs'
 import { CreateBlog } from './pages/CreateBlog'
+import { useSelector } from 'react-redux'
+import { RootState } from './redux'
 
 function App() {
-
+const isLogin = useSelector((state: RootState) => state.login.isLogin);
   return (
     <>
       <BrowserRouter>

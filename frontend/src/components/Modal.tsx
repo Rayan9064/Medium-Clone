@@ -1,6 +1,17 @@
 import { RxCross2 } from "react-icons/rx";
 
-export function Modal() {
+export function Modal(post: any) {
+
+  async function sendRequest() {
+    try {
+        // const response = await axios.post(`${BACKEND_URL}/api/v1/blog`, createBlog);
+        // navigate(`/blogs`);
+        console.log(post);
+    } catch(e) {
+        console.log(e);
+    }
+  }
+
   return (
     <div className=" fixed w-screen h-screen z-10">
       <div className=" w-screen h-screen bg-black opacity-80">
@@ -49,7 +60,7 @@ export function Modal() {
           />
           <p className=" text-sm text-slate-700"><span className=" underline">Learn more</span> about what happens to your post when you publish.</p>
           <div>
-          <button className=" px-3 bg-green-700 rounded-full mx-2 my-[5%] text-slate-100 text-sm px-4px py-2 font-medium">Publish now</button>
+          <button onClick={sendRequest} className=" px-3 bg-green-700 rounded-full mx-2 my-[5%] text-slate-100 text-sm px-4px py-2 font-medium">Publish now</button>
           <button className=" font-extralight text-gray-500 mx-2 text-sm hover:text-gray-700">Schedule for later</button>
           </div>
         </div>

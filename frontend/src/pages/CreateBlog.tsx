@@ -34,8 +34,8 @@ export function CreateBlog() {
 
   //  async function sendRequest() {
   //   try {
-  //       const response = await axios.post(`${BACKEND_URL}/api/v1/blog`, createBlog);
-  //       navigate(`/blogs`);
+  //       // const response = await axios.post(`${BACKEND_URL}/api/v1/blog`, createBlog);
+  //       // navigate(`/blogs`);
   //       console.log(response);
   //   } catch(e) {
   //       console.log(e);
@@ -44,7 +44,7 @@ export function CreateBlog() {
  
   return (
     <div>
-      {modal && <Modal/>}
+      {modal && <Modal post={createBlog}/>}
       <div className="flex items-center justify-between w-4/5 py-8 h-12 mx-auto mb-4">
         <div className=" px-2 font-semibold text-2xl">Medium</div>
         <div className=" flex justify-center items-center">

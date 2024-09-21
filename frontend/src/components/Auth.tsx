@@ -16,7 +16,7 @@ export function Auth({ type }: { type: "signin" | "signup" }) {
     async function sendRequest() {
         try {
             const response = await axios.post(`${BACKEND_URL}/api/user/${type === "signin" ? "signin" : "signup"}`, postInputs);
-            const jwt = response.data;
+            const jwt = response.data.jwt;
             localStorage.setItem("token", jwt);
             navigate("/blogs");
         } catch(e) {
@@ -29,7 +29,7 @@ export function Auth({ type }: { type: "signin" | "signup" }) {
             <div className=" flex flex-col items-center justify-center">
                 <div>
                     <div className=" px-4">
-                        {JSON.stringify(postInputs)}
+                        {/* {JSON.stringify(postInputs)} */}
                         <div className=" text-3xl font-bold">
                             {type === "signin"
                                 ? "Login to your account"

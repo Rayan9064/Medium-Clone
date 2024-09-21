@@ -7,21 +7,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+//   id       Int   @id @default(autoincrement())
+//   email    String   @unique
+//   name     String?
+//   password String
+//   createdAt DateTime @default(now())
+//   blogs    Blog[]
+//   comments Comment[]
+// }
+
+// model Blog {
+//   id        Int   @id @default(autoincrement())
+//   authorId  Int   
+//   title     String
+//   content   String
+//   published Boolean  @default(false)
+//   author    User     @relation(fields: [authorId], references: [id])
+//   createdAt DateTime @default(now())
+//   comments  Comment[]
+//   claps     Int?
+// }
+
+// model Comment {
+//   id        Int   @id @default(autoincrement())
+//   blogId    Int
+//   userId    User  @relation(fields: [id], references: [id])
+//   blog    Blog  @relation(fields: [blogId], references: [id])
+//   createdAt DateTime @default(now())
+// }
+
+// User model
 model User {
-  id       Int   @id @default(autoincrement())
-  email    String   @unique
-  name     String?
-  password String
-  blogs    Blog[]
-  createdAt DateTime
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  username  String?   @unique
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  blogs     Blog[]  @relation("Blogs")
+  comments Comment[] @relation("Comments")
 }
 
+// Blog (article) model
 model Blog {
-  id        Int   @id @default(autoincrement())
-  authorId  Int
+  id        Int      @id @default(autoincrement())
+  authorId  Int      
   title     String
   content   String
   published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User      @relation("Blogs", fields: [authorId], references: [id], onDelete: Cascade)
+  comments  Comment[] @relation("BlogComments")
+  claps     Int      @default(0)
+
+}
+
+// Comment model
+model Comment {
+  id        Int      @id @default(autoincrement())
+  authorId  Int      
+  blogId    Int      
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User      @relation("Comments", fields: [authorId], references: [id], onDelete: Cascade)
+  blog     Blog      @relation("BlogComments", fields: [blogId], references: [id], onDelete: Cascade)
 }

@@ -11,7 +11,7 @@ export const PopUp = ({ openPopUp, closePopUp }: PopUpInputType) => {
       }
     }
   
-    if (openPopUp !== true) return null
+    if (openPopUp !== true) return ""
   
     return (
       <div

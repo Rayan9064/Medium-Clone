@@ -4,8 +4,12 @@ import { signupInput } from "rayan9064_medium-common";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Auth({ type }: { type: "signin" | "signup" }) {
+    const notify = (message: String) => toast.error(message)
+
     const navigate = useNavigate();
     const [postInputs, setPostInputs] = useState<signupInput>({
         email: "",
@@ -13,14 +17,23 @@ export function Auth({ type }: { type: "signin" | "signup" }) {
         password: "", 
     });
 
+
     async function sendRequest() {
         try {
             const response = await axios.post(`${BACKEND_URL}/api/user/${type === "signin" ? "signin" : "signup"}`, postInputs);
             const jwt = response.data.jwt;
             localStorage.setItem("token", jwt);
             navigate("/blogs");
-        } catch(e) {
-            console.log(e)
+        } catch(error: any) {
+            if (error.response.status === 409) {
+                notify("User already exists!")
+                setTimeout(() => {
+                    navigate("/signin");
+                }, 3000);
+            } else if (error.response.status === 401) {
+                notify("Invalid username or password")
+            }
+            console.log(error.response.status)
         } 
     }
 
@@ -94,6 +107,7 @@ export function Auth({ type }: { type: "signin" | "signup" }) {
                 </div>
             </div>
             <Qoute />
+            <ToastContainer autoClose={2000} theme='light' position="top-center" newestOnTop={true}/>
         </div>
     );
 }

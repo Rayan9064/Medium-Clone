@@ -14,19 +14,24 @@ export const blogRouter = new Hono<{
     }
 }>();
 
+// Middlewares for blogs
+//  ** isLogin
+//  ** isAuthor
+
 // Middleware
 blogRouter.use("/*", async (c, next) => {
     const jwt = c.req.header('Authorization') || "";
 	const payload = await verify(jwt, c.env.JWT_SECRET);
 	if (!payload) {
 		c.status(401);
-		return c.json({ error: "unauthorized" });
+		return c.json({pay: payload, error: "unauthorized" });
 	}
 	c.set("userId", payload.id as string);
 	await next()
 });
 
 // New blog 
+// ** Create **
 blogRouter.post('/new', async (c) => {
 	const userId = c.get('userId');
 	const prisma = new PrismaClient({
@@ -54,12 +59,37 @@ blogRouter.post('/new', async (c) => {
 	});
 })
 
+// Access a particular blog post
+// ** Read **
+blogRouter.get('/:id', async (c) => {
+	const id = c.req.param('id');
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL,
+	}).$extends(withAccelerate());
+	
+	const post = await prisma.blog.findUnique({
+		where: {
+			id: Number(id)
+		}
+	});
+
+    if(!post){
+        c.status(411)
+        return c.json({error: "Invalid blog id, Blog not found"});
+    }
+
+    // console.log(post);
+	return c.json(post);
+})
+
 // Update blog
+// ** Update **
 blogRouter.put('/update', async (c) => {
 	const prisma = new PrismaClient({
 		datasourceUrl: c.env?.DATABASE_URL	,
 	}).$extends(withAccelerate());
 
+    const userId = c.get('userId');
 	const body = await c.req.json();
 	const { success } = updateBlogInput.safeParse(body);
     if(!success){
@@ -67,6 +97,17 @@ blogRouter.put('/update', async (c) => {
       return c.json({error: "Invalid input"})
     }
 
+    const post = await prisma.blog.findUnique({
+		where: {
+			id: body.id
+		}
+	});
+
+    if(Number(userId) !== post?.authorId){
+        c.status(401)
+        return c.json({error: "Unauthorized to update this blog!"});
+    }
+    
     try {
 	const updatedBody = await prisma.blog.update({
 		where: {
@@ -88,7 +129,44 @@ blogRouter.put('/update', async (c) => {
     }
 });
 
+// ****************************************************************
+// Delete blog post
+// --- Need to add author verification ++++
+blogRouter.delete('/:id', async (c) => {
+	const id = c.req.param('id');
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env?.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const userId = c.get('userId');
+    const blog = await prisma.blog.findUnique({
+        where: {
+            id: Number(id)
+        }
+    });
+    if (Number(userId) !== blog?.authorId) {
+        c.status(401);
+        return c.json({ error: "Unauthorized, only user can delete the blog" });
+    }
+    try {
+    const deletedBlog = await prisma.blog.delete({
+        where: {
+            id: Number(id)
+        }
+    });
+
+    console.log(deletedBlog);
+    return c.json({ id: id, msg: "Blog deleted!"});
+    }catch(e: any){
+        c.status(411)
+        return c.json({error: "Unable to delete. Something went wrong!", 
+            message: e.message
+        })
+    }
+})
+
 // Bulk router for multiple posts and with pagination
+// ** Read all blogs **
 blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -112,24 +190,4 @@ blogRouter.get('/bulk', async (c) => {
 		message: e.message
 	 });
   }
-})
-
-blogRouter.get('/:id', async (c) => {
-	const id = c.req.param('id');
-	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL,
-	}).$extends(withAccelerate());
-	
-	const post = await prisma.blog.findUnique({
-		where: {
-			id: Number(id)
-		}
-	});
-
-    if(!post){
-        c.status(411)
-        return c.json({error: "Invalid blog id, Blog not found"});
-    }
-
-	return c.json(post);
 })

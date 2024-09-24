@@ -11,6 +11,10 @@ export const userRouter = new Hono<{
     }
 }>()
 
+// Middlewares for user
+//  ** isExistingUser
+//  ** isCredentialsCorrect
+
 
 userRouter.post('/signup', async (c) => {
     const prisma = new PrismaClient({
@@ -75,7 +79,7 @@ userRouter.post('/signup', async (c) => {
       });
   
       if (!user) {
-          c.status(403);
+          c.status(401);
           return c.json({ error: "Invalid credentials" });
       }
   
